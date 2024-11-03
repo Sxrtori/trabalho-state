@@ -1,0 +1,91 @@
+public interface State
+{
+    void InserirCredito(MaquinaDeVenda maquinaDeVenda);
+    void SelecionarProduto(MaquinaDeVenda maquinaDeVenda);
+    void DispensarProduto(MaquinaDeVenda maquinaDeVenda);
+}
+public class MaquinaDeVenda
+{
+  private State _estadoAtual;
+   public MaquinaDeVenda()
+    {
+        _estadoAtual = new SemCreditoState();
+    }
+    public void SetEstado(State novoEstado)
+    {
+        _estadoAtual = novoEstado;
+    }
+    public void InserirCredito()
+    {
+        _estadoAtual.InserirCredito(this);
+    }
+    public void SelecionarProduto()
+    {
+        _estadoAtual.SelecionarProduto(this);
+    }
+    public void DispensarProduto()
+    {
+        _estadoAtual.DispensarProduto(this);
+    }
+}
+public class SemCreditoState : State
+{
+    public void InserirCredito(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Com Crédito.");
+        vendingMachine.SetEstado(new ComCreditoState());
+    }
+    public void SelecionarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Insira crédito antes de selecionar um produto.");
+    }
+    public void DispensarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Sem crédito.");
+    }
+}
+public class ComCreditoState : State
+{
+    public void InserirCredito(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Crédito já inserido.");
+    }
+    public void SelecionarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Produto selecionado.");
+        maquinaDeVenda.SetEstado(new ProdutoDisponivelState());
+    }
+    public void DispensarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Selecione um produto antes de dispensá-lo.");
+    }
+}
+public class ProdutoDisponivelState : State
+{
+    public void InserirCredito(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Já existe crédito inserido.");
+    }
+    public void SelecionarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Produto já selecionado.");
+    }
+    public void DispensarProduto(MaquinaDeVenda maquinaDeVenda)
+    {
+        Console.WriteLine("Dispensando o produto...");
+        maquinaDeVenda.SetEstado(new SemCreditoState());
+    }
+}
+class Program
+{
+    static void Main(string[] args)
+    {
+        MaquinaDeVenda maquinaDeVenda = new MaquinaDeVenda();
+
+        maquinaDeVenda.SelecionarProduto();  
+        maquinaDeVenda.DispensarProduto();   
+        maquinaDeVenda.InserirCredito();  
+        maquinaDeVenda.SelecionarProduto();
+        maquinaDeVenda.DispensarProduto();
+    }
+}
